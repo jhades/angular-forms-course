@@ -18,24 +18,23 @@ interface CourseCategory {
 export class CreateCourseStep1Component implements OnInit {
 
   form = this.fb.group({
-      title: ['', {
-          validators: [
-              Validators.required,
-              Validators.minLength(5),
-              Validators.maxLength(60)
-          ],
-          asyncValidators: [courseTitleValidator(this.courses)],
-          updateOn: 'blur'
-      }],
-      releasedAt: [new Date(), Validators.required],
-      category: ['BEGINNER', Validators.required],
-      downloadsAllowed: [false, Validators.requiredTrue],
-      longDescription: ['', [Validators.required, Validators.minLength(3)]],
-      totalQuantity: [100, [Validators.required, Validators.min(10), Validators.max(100)]]
+    title: ['', {
+      validators: [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(60)
+      ],
+      asyncValidators: [courseTitleValidator(this.courses)],
+      updateOn: 'blur'
+    }],
+    releasedAt: [new Date(), Validators.required],
+    category: ['BEGINNER', Validators.required],
+    downloadsAllowed: [false, Validators.requiredTrue],
+    longDescription: ['', [Validators.required, Validators.minLength(3)]],
+    totalQuantity: [60, [Validators.required, Validators.max(100)]]
   });
 
   courseCategories$ : Observable<CourseCategory[]>;
-
 
   constructor(private fb: FormBuilder, private courses:CoursesService) {
 
