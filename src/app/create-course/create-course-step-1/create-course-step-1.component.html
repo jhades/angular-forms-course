@@ -1,6 +1,8 @@
 
 <div [formGroup]="form">
 
+    <choose-quantity [increment]="10" formControlName="totalQuantity"></choose-quantity>
+
     <mat-form-field>
 
         <input matInput placeholder="Course title" formControlName="title" #title>
