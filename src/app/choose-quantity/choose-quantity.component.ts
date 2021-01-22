@@ -17,15 +17,10 @@ import {
       provide: NG_VALUE_ACCESSOR,
       multi:true,
       useExisting: ChooseQuantityComponent
-    },
-    {
-      provide: NG_VALIDATORS,
-      multi: true,
-      useExisting: ChooseQuantityComponent
     }
   ]
 })
-export class ChooseQuantityComponent implements ControlValueAccessor, Validator {
+export class ChooseQuantityComponent implements ControlValueAccessor {
 
   quantity = 0;
 
@@ -77,17 +72,6 @@ export class ChooseQuantityComponent implements ControlValueAccessor, Validator 
 
   setDisabledState(disabled: boolean) {
     this.disabled = disabled;
-  }
-
-  validate(control: AbstractControl): ValidationErrors | null {
-    const quantity = control.value;
-    if (quantity <= 0) {
-      return {
-        mustBePositive: {
-          quantity
-        }
-      };
-    }
   }
 
 }

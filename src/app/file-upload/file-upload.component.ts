@@ -1,55 +1,27 @@
 import {Component, Input} from '@angular/core';
 import {HttpClient, HttpEventType} from '@angular/common/http';
-import {catchError, finalize} from 'rxjs/operators';
-import {of} from 'rxjs';
-import {AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator} from '@angular/forms';
+import {finalize} from 'rxjs/operators';
+import {Observable, Subscription} from "rxjs";
 
 
 @Component({
   selector: 'file-upload',
   templateUrl: "file-upload.component.html",
-  styleUrls: ["file-upload.component.scss"],
-  providers: [
-      {
-          provide: NG_VALUE_ACCESSOR,
-          multi: true,
-          useExisting: FileUploadComponent
-      },
-      {
-          provide: NG_VALIDATORS,
-          multi: true,
-          useExisting: FileUploadComponent
-      }
-  ]
+  styleUrls: ["file-upload.component.scss"]
 })
-export class FileUploadComponent implements ControlValueAccessor, Validator {
+export class FileUploadComponent {
 
     @Input()
     requiredFileType:string;
 
     fileName = '';
 
-    fileUploadError = false;
-
-    fileUploadSuccess = false;
-
     uploadProgress:number;
 
-    onChange = (fileName:string) => {};
-
-    onTouched = () => {};
-
-    onValidatorChange = () => {};
-
-    disabled : boolean = false;
+    uploadSub: Subscription;
 
     constructor(private http: HttpClient) {
 
-    }
-
-    onClick(fileUpload: HTMLInputElement) {
-        this.onTouched();
-        fileUpload.click();
     }
 
     onFileSelected(event) {
@@ -64,77 +36,32 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
 
             formData.append("thumbnail", file);
 
-            this.fileUploadError = false;
-
-            this.http.post("/api/thumbnail-upload", formData, {
+            const upload$ = this.http.post("/api/thumbnail-upload", formData, {
                 reportProgress: true,
                 observe: 'events'
             })
             .pipe(
-                catchError(error => {
-                    this.fileUploadError = true;
-                    return of(error);
-                }),
-                finalize(() => {
-                    this.uploadProgress = null;
-                })
-            )
-            .subscribe(event => {
-                if (event.type == HttpEventType.UploadProgress) {
-                    this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-                }
-                else if (event.type == HttpEventType.Response) {
-                    this.fileUploadSuccess = true;
-                    this.onChange(this.fileName);
-                    this.onValidatorChange();
-                }
-            });
+                finalize(() => this.reset())
+            );
 
-
-
+            this.uploadSub = upload$.subscribe(event => {
+              if (event.type == HttpEventType.UploadProgress) {
+                this.uploadProgress = Math.round(100 * (event.loaded / event.total));
+              }
+            })
         }
 
     }
 
-    writeValue(value: any) {
-        this.fileName = value;
-    }
+  cancelUpload() {
+    this.uploadSub.unsubscribe();
+    this.reset();
+  }
 
-    registerOnChange(onChange: any) {
-        this.onChange = onChange;
-    }
-
-    registerOnTouched(onTouched: any) {
-        this.onTouched = onTouched;
-    }
-
-    setDisabledState(disabled: boolean) {
-        this.disabled = disabled;
-    }
-
-    registerOnValidatorChange(onValidatorChange: () => void) {
-        this.onValidatorChange = onValidatorChange;
-    }
-
-    validate(control: AbstractControl): ValidationErrors | null {
-
-        if (this.fileUploadSuccess) {
-            return null;
-        }
-
-        let errors: any = {
-            requiredFileType: this.requiredFileType
-        };
-
-        if (this.fileUploadError) {
-            errors.uploadFailed = true;
-        }
-
-        return errors;
-    }
-
-
-
+  reset() {
+    this.uploadProgress = null;
+    this.uploadSub = null;
+  }
 
 }
 

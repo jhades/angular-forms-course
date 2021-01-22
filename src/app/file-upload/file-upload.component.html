@@ -4,14 +4,10 @@
 
 <div class="file-upload">
 
-    <mat-form-field>
-
-        <input matInput [disabled]="true" [value]="fileName">
-
-    </mat-form-field>
+   {{fileName}}
 
     <button mat-mini-fab color="primary" class="upload-btn"
-      (click)="onClick(fileUpload)" [disabled]="disabled">
+      (click)="fileUpload.click()">
         <mat-icon>attach_file</mat-icon>
 
     </button>
@@ -23,3 +19,5 @@
                   [value]="uploadProgress">
 
 </mat-progress-bar>
+
+<mat-icon class="cancel-upload" *ngIf="uploadProgress" (click)="cancelUpload()">delete_forever</mat-icon>

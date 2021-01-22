@@ -1,6 +1,8 @@
 
 <div [formGroup]="form">
 
+    <input type="file" class="file-upload" onchange="console.log(event.target.files)">
+
     <choose-quantity [increment]="10" formControlName="totalQuantity"></choose-quantity>
 
     <mat-form-field>
