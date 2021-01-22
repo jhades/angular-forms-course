@@ -1,18 +1,32 @@
 
+:host {
+  margin: 20px 0;
+}
+
 .file-input {
   display: none;
 }
 
 .file-upload {
-display: flex;
-  align-items: flex-end;
+  display: flex;
+  align-items: center;
 }
 
 .upload-btn {
   margin-left: 10px;
-  margin-bottom:15px;
 }
 
 .progress-bar {
+  margin-bottom: 10px;
+}
+
+.progress {
+  display: flex;
+  max-width: 300px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.cancel-upload {
   margin-bottom: 10px;
 }
